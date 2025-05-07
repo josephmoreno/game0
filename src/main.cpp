@@ -1,9 +1,6 @@
 // Heavily referenced: https://youtube.com/playlist?list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx&si=lpjEMfmYyjf_TN1X
-// g++ --std=gnu++17 -Wall -m64 -I "C:/Program Files/mingw64/sdl2-w64/include" -I include src/*.cpp -L "C:/Program Files/mingw64/sdl2-w64/lib" -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o debug/out
 
 #include "../include/Game.hpp"
-
-Game* game = nullptr;
 
 int main(int argc, char** argv) {
     const int fps = 60;
@@ -12,11 +9,9 @@ int main(int argc, char** argv) {
     Uint32 frame_start;
     int frame_time;
 
-    game = new Game();
+    Game* game = new Game("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false);
 
-    game->init("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false);
-
-    while(Game::is_running) {
+    while(game->is_running) {
         frame_start = SDL_GetTicks();
 
         game->handleEvents();
@@ -29,7 +24,7 @@ int main(int argc, char** argv) {
             SDL_Delay(frame_delay - frame_time);
     }
 
-    game->clean();
+    delete game;
 
     return(0);
 };

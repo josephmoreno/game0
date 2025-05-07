@@ -6,30 +6,27 @@
 
 class Game {
 private:
-    SDL_Window *window;
+    SDL_Window* window;
+    entt::registry registry;
 
 public:
-    Game();
+    Game(const char* title, int x, int y, int w, int h, bool fullscreen);
     ~Game();
 
-    static SDL_Renderer* renderer;
-    static SDL_Event event;
+    SDL_Renderer* renderer;
+    SDL_Event event;
+    bool is_running;
+    SDL_Rect camera;
+    AssetManager* assets;
 
-    void init(const char* title, int x, int y, int w, int h, bool fullscreen);
+    // enum group_labels : std::size_t {
+    //     group_map,
+    //     group_players,
+    //     group_colliders,
+    //     group_projectiles
+    // };
 
     void handleEvents();
     void update();
     void render();
-    void clean();
-
-    static bool is_running;
-    static SDL_Rect camera;
-    static AssetManager* assets;
-
-    enum group_labels : std::size_t {
-        group_map,
-        // group_players,
-        // group_colliders,
-        // group_projectiles
-    };
 };

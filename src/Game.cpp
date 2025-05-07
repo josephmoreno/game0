@@ -2,14 +2,7 @@
 
 #include "../include/Game.hpp"
 
-SDL_Renderer* Game::renderer = nullptr;
-SDL_Event Game::event;
-bool Game::is_running = false;
-
-Game::Game() {};
-Game::~Game() {};
-
-void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) {
+Game::Game(const char* title, int x, int y, int w, int h, bool fullscreen) {
     int flags = 0;
     
     if (fullscreen)
@@ -24,23 +17,35 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
 
         renderer = SDL_CreateRenderer(window, -1, 0);
         if (renderer) {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+            SDL_SetRenderDrawColor(renderer, 100, 147, 237, 255);
             std::cout << "Renderer created" << std::endl;
         }
 
-        Game::is_running = true;
+        is_running = true;
+
+        assets = new AssetManager(&registry, renderer);
     }else
-        Game::is_running = false;
+        is_running = false;
+
+    return;
+};
+
+Game::~Game() {
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();
+
+    std::cout << "Game cleaned up" << std::endl;
 
     return;
 };
 
 void Game::handleEvents() {
-    SDL_PollEvent(&Game::event);
+    SDL_PollEvent(&event);
 
-    switch(Game::event.type) {
+    switch(event.type) {
         case SDL_QUIT:
-            Game::is_running = false;
+            is_running = false;
             break;
 
         default:
@@ -57,16 +62,6 @@ void Game::update() {
 void Game::render() {
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
-
-    return;
-};
-
-void Game::clean() {
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
-    SDL_Quit();
-
-    std::cout << "Game cleaned up" << std::endl;
 
     return;
 };
