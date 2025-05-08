@@ -9,14 +9,16 @@ int main(int argc, char** argv) {
     Uint32 frame_start;
     int frame_time;
 
-    Game* game = new Game("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false);
+    Game game;
 
-    while(game->is_running) {
+    game.init("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false);
+
+    while(Game::is_running) {
         frame_start = SDL_GetTicks();
 
-        game->handleEvents();
-        game->update();
-        game->render();
+        game.handleEvents();
+        game.update();
+        game.render();
 
         frame_time = SDL_GetTicks() - frame_start;
 
@@ -24,7 +26,7 @@ int main(int argc, char** argv) {
             SDL_Delay(frame_delay - frame_time);
     }
 
-    delete game;
+    game.cleanUp();
 
     return(0);
 };

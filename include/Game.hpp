@@ -1,23 +1,21 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <entt.hpp>
 
 #include "AssetManager.hpp"
 
 class Game {
 private:
-    SDL_Window* window;
-    entt::registry registry;
+    static SDL_Window* window;
+    static entt::registry registry;
 
 public:
-    Game(const char* title, int x, int y, int w, int h, bool fullscreen);
-    ~Game();
-
-    SDL_Renderer* renderer;
-    SDL_Event event;
-    bool is_running;
-    SDL_Rect camera;
-    AssetManager* assets;
+    static SDL_Renderer* renderer;
+    static SDL_Event event;
+    static bool is_running;
+    static SDL_Rect camera;
+    static AssetManager assets;
 
     // enum group_labels : std::size_t {
     //     group_map,
@@ -26,7 +24,9 @@ public:
     //     group_projectiles
     // };
 
+    void init(const char* title, int x, int y, int w, int h, bool fullscreen);
     void handleEvents();
     void update();
     void render();
+    void cleanUp();
 };
