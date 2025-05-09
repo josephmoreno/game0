@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Vector2d.hpp"
+#include "Velocity.hpp"
 
 // Entity's on-screen position and dimensions
 class Transform final {
@@ -42,6 +43,7 @@ public:
     };
 
     Vector2d getPos() { return pos; };
+    Vector2d& getPosRef() { return pos; };
     int w() { return width; };
     int h() { return height; };
     int sc() { return scale; };

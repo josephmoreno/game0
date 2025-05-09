@@ -1,6 +1,11 @@
 #include "../include/AssetManager.hpp"
 #include "../include/Game.hpp"
 
+AssetManager::~AssetManager() {
+    for(auto map_item : tex_map)
+        SDL_DestroyTexture(map_item.second);
+};
+
 SDL_Texture* AssetManager::loadTex(const char* file_path) {
     SDL_Surface* temp_surface = IMG_Load(file_path);
     SDL_Texture* tex = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);

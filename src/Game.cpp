@@ -41,8 +41,12 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
     const auto player = Game::registry.create();
 
     // Assign components to entities
-    Game::registry.emplace<Transform>(player, 32, 32, 2);
-    Game::registry.emplace<Sprite>(player, "ss_numbo", Game::registry.get<Transform>(player));
+    Game::registry.emplace<Transform>(player, 320, 320, 32, 32, 1);
+    Game::registry.emplace<Velocity>(player);
+    Game::registry.emplace<Acceleration>(player);
+    Game::registry.emplace<Sprite>(player, "NumboIdle", "ss_numbo", 0, 12, 100, Game::registry.get<Transform>(player), Game::registry.get<Velocity>(player), Game::registry.get<Acceleration>(player));
+    Game::registry.get<Sprite>(player).addAnim("NumboWalk", "ss_numbo", 1, 6, 100);
+    Game::registry.emplace<KeyboardControl>(player, Game::registry.get<Sprite>(player));
 
     return;
 };
@@ -63,9 +67,18 @@ void Game::handleEvents() {
 };
 
 void Game::update() {
-    auto view = Game::registry.view<Sprite>();
-    for(auto entity : view) 
-        view.get<Sprite>(entity).update();
+    auto group = Game::registry.group<Sprite>(entt::get<KeyboardControl>);
+    for(auto entity : group) {
+        auto[sprite, kc] = group.get<Sprite, KeyboardControl>(entity);
+        sprite.update();
+        kc.update();
+
+        // Sprite& sprite = group.get<Sprite>(entity);
+        // KeyboardControl& kc = group.get<KeyboardControl>(entity);
+
+        // sprite.update();
+        // kc.update();
+    }
 
     return;
 };
