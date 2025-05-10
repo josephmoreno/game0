@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../include/components/Components.hpp"
 #include "../include/Game.hpp"
+#include "../include/components/Components.hpp"
 
 SDL_Window* Game::window = nullptr;
 entt::registry Game::registry;
@@ -10,6 +10,7 @@ SDL_Event Game::event;
 bool Game::is_running;
 SDL_Rect Game::camera;
 AssetManager Game::assets;
+Map Game::cur_map;
 
 void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) {
     int flags = 0;
@@ -36,17 +37,20 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
 
     // Add assets to asset manager
     Game::assets.addTex("ss_numbo", "assets/ss_numbo.png");
+    Game::assets.addTex("ts_map0", "assets/ts_map0.png");
 
     // Create entities
+    Game::cur_map.setMap("ts_map0", 2, 32);
+    Game::cur_map.loadMap("assets/map0.csv", 25, 20);   // loadMap() creates entities with tile components
     const auto player = Game::registry.create();
 
     // Assign components to entities
-    Game::registry.emplace<Transform>(player, 320, 320, 32, 32, 1);
-    Game::registry.emplace<Velocity>(player);
-    Game::registry.emplace<Acceleration>(player);
-    Game::registry.emplace<Sprite>(player, "NumboIdle", "ss_numbo", 0, 12, 100, Game::registry.get<Transform>(player), Game::registry.get<Velocity>(player), Game::registry.get<Acceleration>(player));
-    Game::registry.get<Sprite>(player).addAnim("NumboWalk", "ss_numbo", 1, 6, 100);
-    Game::registry.emplace<KeyboardControl>(player, Game::registry.get<Sprite>(player));
+    Transform& player_trans = Game::registry.emplace<Transform>(player, 320, 320, 32, 32, 2);
+    Velocity& player_vel = Game::registry.emplace<Velocity>(player, 2);
+    Acceleration& player_accel = Game::registry.emplace<Acceleration>(player);
+    Sprite& player_sprite = Game::registry.emplace<Sprite>(player, "Idle", "ss_numbo", 0, 12, 100, player_trans, player_vel, player_accel);
+    player_sprite.addAnim("Walk", "ss_numbo", 1, 6, 100);
+    Game::registry.emplace<KeyboardControl>(player, player_sprite);
 
     return;
 };
@@ -72,12 +76,6 @@ void Game::update() {
         auto[sprite, kc] = group.get<Sprite, KeyboardControl>(entity);
         sprite.update();
         kc.update();
-
-        // Sprite& sprite = group.get<Sprite>(entity);
-        // KeyboardControl& kc = group.get<KeyboardControl>(entity);
-
-        // sprite.update();
-        // kc.update();
     }
 
     return;
@@ -86,9 +84,13 @@ void Game::update() {
 void Game::render() {
     SDL_RenderClear(Game::renderer);
 
-    auto view = Game::registry.view<Sprite>();
-    for(auto entity : view)
-        view.get<Sprite>(entity).draw();
+    auto map_view = Game::registry.view<Tile>();
+    for(auto entity : map_view)
+        map_view.get<Tile>(entity).draw();
+
+    auto sprite_view = Game::registry.view<Sprite>();
+    for(auto entity : sprite_view)
+        sprite_view.get<Sprite>(entity).draw();
 
     SDL_RenderPresent(Game::renderer);
 

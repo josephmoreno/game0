@@ -15,18 +15,20 @@ class Sprite final {
 private:
     SDL_Texture* tex;
     SDL_Rect rect_src, rect_dest;
+    SDL_RendererFlip sprite_flip = SDL_FLIP_NONE;
 
     bool animated = false;
     int frames = 0;
     int speed = 100;    // Delay between frames in ms
     int ss_row;         // Row on the sprite sheet to use for the animation
 
+    float temp = 0;
+
 public:
     Transform* transform = nullptr;
     Velocity* vel = nullptr;
     Acceleration* accel = nullptr;
-    std::map<std::string, std::tuple<std::string, int, int, int>> animations;   // <descriptive name for animation, <texture key for asset manager, ss_row, # of frames, speed>>
-    SDL_RendererFlip sprite_flip = SDL_FLIP_NONE;
+    std::map<std::string, std::tuple<std::string, int, int, int>> animations;   // <descriptive name for animation, <texture key for asset manager, ss_row, # of frames, speed>
 
     Sprite() {};
     Sprite(std::string tex_key, Transform& transform) {  // Construct un-animated sprite
@@ -92,7 +94,7 @@ public:
             rect_dest.h = transform->h() * transform->sc();
 
             if (vel != nullptr) {
-                transform->getPosRef() += vel->getVel();
+                transform->getPosRef() += vel->getVelScaled();
                 sprite_flip = vel->getVel().x > 0 ? SDL_FLIP_HORIZONTAL : vel->getVel().x < 0 ? SDL_FLIP_NONE : sprite_flip;
 
                 if (accel != nullptr)

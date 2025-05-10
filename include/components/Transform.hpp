@@ -8,8 +8,8 @@ class Transform final {
 private:
     Vector2d pos;
 
-    int height = 32;
     int width = 32;
+    int height = 32;
     int scale = 1;
 
 public:
@@ -44,6 +44,14 @@ public:
 
     Vector2d getPos() { return pos; };
     Vector2d& getPosRef() { return pos; };
+    
+    void setTransform(float x, float y, int width, int height, int scale) {
+        pos = Vector2d(x, y);
+        this->width = width;
+        this->height = height;
+        this->scale = scale;
+    };
+    
     int w() { return width; };
     int h() { return height; };
     int sc() { return scale; };
