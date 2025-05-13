@@ -49,22 +49,18 @@ public:
             switch(Game::event.key.keysym.sym) {
                 case SDLK_w:
                     sprite->vel->getVelRef().y = 0;
-                    sprite->setCurAnim("Idle");
                     break;
 
                 case SDLK_a:
                     sprite->vel->getVelRef().x = 0;
-                    sprite->setCurAnim("Idle");
                     break;
 
                 case SDLK_s:
                     sprite->vel->getVelRef().y = 0;
-                    sprite->setCurAnim("Idle");
                     break;
 
                 case SDLK_d:
                     sprite->vel->getVelRef().x = 0;
-                    sprite->setCurAnim("Idle");
                     break;
 
                 default:

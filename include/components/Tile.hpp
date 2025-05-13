@@ -27,8 +27,8 @@ public:
     };
 
     void update() {
-        // rect_dest.x = pos.x - Game::camera.x;
-        // rect_dest.y = pos.y - Game::camera.y;
+        rect_dest.x = this->transform->getPos().x - Game::camera.x;
+        rect_dest.y = this->transform->getPos().y - Game::camera.y;
     };
 
     void draw() {

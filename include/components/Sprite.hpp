@@ -85,9 +85,6 @@ public:
         if (transform != nullptr) {
             rect_src.y = ss_row * transform->h();
 
-            // rect_dest.x = static_cast<int>(transform->getPos().x) - Game::camera.x;
-            // rect_dest.y = static_cast<int>(transform->getPos().y) - Game::camera.y;
-
             rect_dest.x = transform->getPos().x;
             rect_dest.y = transform->getPos().y;
             rect_dest.w = transform->w() * transform->sc();
@@ -96,6 +93,34 @@ public:
             if (vel != nullptr) {
                 transform->getPosRef() += vel->getVelScaled();
                 sprite_flip = vel->getVel().x > 0 ? SDL_FLIP_HORIZONTAL : vel->getVel().x < 0 ? SDL_FLIP_NONE : sprite_flip;
+
+                if (vel->isZero())
+                    setCurAnim("Idle"); // All sprites must have an idle animation
+
+                if (accel != nullptr)
+                    vel->getVelRef() += accel->getAccel();
+            }
+        }
+    };
+
+    void update(int dest_x, int dest_y) {
+        if (animated)
+            rect_src.x = rect_src.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
+
+        if (transform != nullptr) {
+            rect_src.y = ss_row * transform->h();
+
+            rect_dest.x = dest_x;
+            rect_dest.y = dest_y;
+            rect_dest.w = transform->w() * transform->sc();
+            rect_dest.h = transform->h() * transform->sc();
+
+            if (vel != nullptr) {
+                transform->getPosRef() += vel->getVelScaled();
+                sprite_flip = vel->getVel().x > 0 ? SDL_FLIP_HORIZONTAL : vel->getVel().x < 0 ? SDL_FLIP_NONE : sprite_flip;
+
+                if (vel->isZero())
+                    setCurAnim("Idle"); // All sprites must have an idle animation
 
                 if (accel != nullptr)
                     vel->getVelRef() += accel->getAccel();

@@ -5,17 +5,20 @@
 #include "../include/components/Tile.hpp"
 #include "../include/components/Transform.hpp"
 
-void Map::setMap(std::string tex_id, int map_scale, int tile_size) {
+void Map::setMap(std::string tex_id, std::string map_path, int map_scale, int tile_size, int size_x, int size_y) {
     this->tex_id = tex_id;
+    this->map_path = map_path;
     this->map_scale = map_scale;
     this->tile_size = tile_size;
     scaled_size = map_scale * tile_size;
+    this->size_x = size_x;
+    this->size_y = size_y;
 };
 
-void Map::loadMap(std::string path, int size_x, int size_y) {
+void Map::loadMap() {
     char c;
     std::fstream map_file;
-    map_file.open(path);
+    map_file.open(map_path);
 
     int src_x, src_y;
 

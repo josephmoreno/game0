@@ -15,4 +15,6 @@ public:
     Vector2d getVel() { return vel; };
     Vector2d getVelScaled() { Vector2d temp(vel.x, vel.y); return (temp * Vector2d(scale, scale)); };
     Vector2d& getVelRef() { return vel; };
+
+    bool isZero() { return (vel.x == 0 && vel.y == 0); }
 };
