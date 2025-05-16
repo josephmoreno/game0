@@ -47,7 +47,7 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
         assets.addTex("ts_map0", "assets/ts_map0.png");
 
         // Set map and the camera
-        cur_map.setMap("ts_map0", "assets/map0.csv", 2, 32, 25, 20);
+        cur_map.setMap("ts_map0", "assets/map0", 2, 32, 25, 20);
         camera = {0, 0, w, h};
         cam_x_max = (cur_map.size_x * cur_map.scaled_size) - win_w;
         cam_y_max = (cur_map.size_y * cur_map.scaled_size) - win_h;
@@ -63,6 +63,7 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
         Sprite& player_sprite = registry.emplace<Sprite>(player, "Idle", "ss_numbo", 0, 12, 100, player_trans, player_vel, player_accel);
         player_sprite.addAnim("Walk", "ss_numbo", 1, 6, 100);
         registry.emplace<KeyboardControl>(player, player_sprite);
+        registry.emplace<Collision>(player, player_trans);
     }else
         is_running = false;
 
@@ -118,6 +119,44 @@ void Game::update() {
     player_sprite.update(player_trans.getPos().x - camera.x, player_trans.getPos().y - camera.y);
     player_kc.update();
 
+    // *** Player collision still has issues
+    SDL_Rect* player_coll, * coll, intersect;
+    player_coll = &registry.get<Collision>(player).getCollRectRef();
+    Velocity& player_vel = registry.get<Velocity>(player);
+    auto coll_view = registry.view<Collision>();
+    for(auto entity : coll_view) {
+        Collision& coll_ent = coll_view.get<Collision>(entity);
+        coll_ent.update();
+
+        coll = &coll_ent.getCollRectRef();
+
+        if (SDL_IntersectRect(player_coll, coll, &intersect) == SDL_TRUE && entity != player) {
+            // Player top border intersect with colliding entity's bottom border
+            if ((player_coll->y == intersect.y) && (coll->y + coll->h == intersect.y + intersect.h)) {
+                registry.get<Transform>(player).getPosRef().y += intersect.h;
+                player_vel.getVelRef() *= Vector2d(1, 0);
+            }
+
+            // Player bottom border intersect with colliding entity's top border
+            if ((player_coll->y + player_coll->h == intersect.y + intersect.h) && (coll->y == intersect.y)) {
+                registry.get<Transform>(player).getPosRef().y -= intersect.h;
+                player_vel.getVelRef() *= Vector2d(1, 0);
+            }
+
+            // Player left border intersect with colliding entity's right border
+            if ((player_coll->x == intersect.x) && (coll->x + coll->w == intersect.x + intersect.w)) {
+                registry.get<Transform>(player).getPosRef().x += intersect.w;
+                player_vel.getVelRef() *= Vector2d(0, 1);
+            }
+
+            // Player right border intersect with colliding entity's left border
+            if ((player_coll->x + player_coll->w == intersect.x + intersect.w) && (coll->x == intersect.x)) {
+                registry.get<Transform>(player).getPosRef().x -= intersect.w;
+                player_vel.getVelRef() *= Vector2d(0, 1);
+            }
+        }
+    }
+
     return;
 };
 
@@ -127,6 +166,10 @@ void Game::render() {
     auto map_view = registry.view<Tile>();
     for(auto entity : map_view)
         map_view.get<Tile>(entity).draw();
+
+    auto coll_view = registry.view<Collision>();
+    for(auto entity : coll_view)
+        coll_view.get<Collision>(entity).draw();
 
     // auto sprite_view = registry.view<Sprite>();
     // for(auto entity : sprite_view)

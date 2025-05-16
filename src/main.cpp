@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 
     Game game;
 
-    game.init("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, true);
+    game.init("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false);
 
     while(Game::is_running) {
         frame_start = SDL_GetTicks();

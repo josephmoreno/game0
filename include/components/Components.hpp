@@ -6,3 +6,4 @@
 #include "Sprite.hpp"
 #include "KeyboardControl.hpp"
 #include "Tile.hpp"
+#include "Collision.hpp"

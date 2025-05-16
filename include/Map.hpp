@@ -1,11 +1,12 @@
 #pragma once
 
+#include <entt.hpp>
 #include <string>
 
 class Map {
 private:
     std::string tex_id;
-    std::string map_path;
+    std::string map_path = "";
 
 public:
     int map_scale;
@@ -16,5 +17,5 @@ public:
 
     void setMap(std::string tex_id, std::string map_path, int map_scale, int tile_size, int size_x, int size_y);
     void loadMap();
-    void addTile(int src_x, int src_y, float pos_x, float pos_y);
+    entt::entity addTile(int src_x, int src_y, float pos_x, float pos_y);
 };

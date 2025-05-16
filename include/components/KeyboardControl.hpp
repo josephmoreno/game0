@@ -18,7 +18,7 @@ public:
             switch(Game::event.key.keysym.sym) {
                 case SDLK_w:
                     sprite->vel->getVelRef().y = -1;
-                    sprite->setCurAnim("Walk");
+                    sprite->setCurAnim("Walk"); // All controllable sprites must have a walk animation
                     break;
 
                 case SDLK_a:
