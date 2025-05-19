@@ -7,3 +7,5 @@
 #include "KeyboardControl.hpp"
 #include "Tile.hpp"
 #include "Collision.hpp"
+#include "Button.hpp"
+#include "MouseControl.hpp"

@@ -17,6 +17,7 @@ public:
     static int win_w, win_h;
     static entt::registry registry;
     static entt::entity player;
+    static entt::entity music_btn;  // Will create a separate Menu class for multiple buttons; only 1 button for now so it will be part of the Game class
     static SDL_Renderer* renderer;
     static SDL_Event event;
     static bool is_running;

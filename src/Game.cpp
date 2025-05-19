@@ -11,6 +11,7 @@ int Game::cam_y_max = 0;
 
 entt::registry Game::registry;
 entt::entity Game::player;
+entt::entity Game::music_btn;   // Will create a separate Menu class for multiple buttons; only 1 button for now so it will be part of the Game class
 SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
 bool Game::is_running;
@@ -40,11 +41,22 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
             std::cout << "Renderer created" << std::endl;
         }
 
+        // Initialize SDL_mixer.
+        Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+
         is_running = true;
 
         // Add assets to asset manager
         assets.addTex("ss_numbo", "assets/ss_numbo.png");
         assets.addTex("ts_map0", "assets/ts_map0.png");
+        assets.addTex("music_toggle", "assets/music_toggle_icons.png");
+        assets.addMusic("map0_music0", "assets/map0_music0.mp3");
+        assets.addSfx("beach_sfx", "assets/beach_sfx.wav");
+
+        // Set and play music
+        assets.setMusic("map0_music0");
+        assets.toggleMusic();
+        assets.playSfx("beach_sfx", 128, -1);
 
         // Set map and the camera
         cur_map.setMap("ts_map0", "assets/map0", 2, 32, 25, 20);
@@ -54,9 +66,13 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
 
         // Create entities
         cur_map.loadMap();  // loadMap() creates entities with tile components
+        music_btn = registry.create();
         player = registry.create();
 
         // Assign components to entities
+        Transform& music_btn_trans = registry.emplace<Transform>(music_btn, 0, 0, 32, 32, 2);
+        registry.emplace<Button>(music_btn, "music_toggle", music_btn_trans, assets.toggleMusic);
+        registry.emplace<MouseControl>(music_btn, music_btn);
         Transform& player_trans = registry.emplace<Transform>(player, 320, 320, 32, 32, 2);
         Velocity& player_vel = registry.emplace<Velocity>(player, 2);
         Acceleration& player_accel = registry.emplace<Acceleration>(player);
@@ -97,6 +113,9 @@ void Game::update() {
     auto map_view = registry.view<Tile>();
     for(auto entity : map_view)
         map_view.get<Tile>(entity).update();
+
+    registry.get<Button>(music_btn).update();
+    registry.get<MouseControl>(music_btn).update();
 
     // Update the camera position
     Transform player_trans = registry.get<Transform>(player);
@@ -171,6 +190,8 @@ void Game::render() {
     for(auto entity : coll_view)
         coll_view.get<Collision>(entity).draw();
 
+    registry.get<Button>(music_btn).draw();
+
     // auto sprite_view = registry.view<Sprite>();
     // for(auto entity : sprite_view)
     //     sprite_view.get<Sprite>(entity).draw();
@@ -185,6 +206,8 @@ void Game::render() {
 void Game::cleanUp() {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    IMG_Quit();
+    Mix_Quit();
     SDL_Quit();
 
     std::cout << "Game cleaned up" << std::endl;
