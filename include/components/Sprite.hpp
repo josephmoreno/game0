@@ -22,8 +22,6 @@ private:
     int speed = 100;    // Delay between frames in ms
     int ss_row;         // Row on the sprite sheet to use for the animation
 
-    float temp = 0;
-
 public:
     Transform* transform = nullptr;
     Velocity* vel = nullptr;

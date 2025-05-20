@@ -25,7 +25,7 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
     if (fullscreen)
         flags = SDL_WINDOW_FULLSCREEN;
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0) {
         std::cout << "SDL sub-systems initialized" << std::endl;
 
         window = SDL_CreateWindow(title, x, y, w, h, flags);
@@ -80,8 +80,11 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen) 
         player_sprite.addAnim("Walk", "ss_numbo", 1, 6, 100);
         registry.emplace<KeyboardControl>(player, player_sprite);
         registry.emplace<Collision>(player, player_trans);
-    }else
+    }else {
+        std::cout << "so you decided not to run huh" << std::endl;
+
         is_running = false;
+    }
 
     return;
 };
