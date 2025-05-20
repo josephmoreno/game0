@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     game.init("Game0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false);
 
     #ifdef __EMSCRIPTEN__
-    emscripten_set_main_loop(mainLoop, 0, 1);
+    emscripten_set_main_loop(mainLoop, 0, 1);   
     #else
     while(1) { mainLoop(); }
     #endif

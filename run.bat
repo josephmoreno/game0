@@ -1,4 +1,7 @@
-::"C:\Program Files\emsdk\emsdk_env"
-::Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+:: pushd .
+:: cd "C:\Program Files\emsdk"
+:: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+:: .\emsdk_env
+:: popd
 cd %~dp0
 em++ -std=gnu++17 -Wall -I "C:/Program Files/mingw64/sdl2-w64/include" -I "C:/Program Files/mingw64/entt/single_include/entt" -I include/components -I include src/AssetManager.cpp src/Map.cpp src/Vector2d.cpp src/Game.cpp src/main.cpp -o debug/tile_based_game0.mjs --use-port=sdl2 --use-port=sdl2_image:formats=png -sALLOW_MEMORY_GROWTH -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS=wav,mp3 -sMODULARIZE=1 -sEXPORTED_FUNCTIONS=_main,_normalQuit -sEXPORTED_RUNTIME_METHODS=cwrap -sEXIT_RUNTIME=1 --embed-file assets@assets

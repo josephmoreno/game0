@@ -49,23 +49,12 @@ void Map::loadMap() {
                 coll0_file.ignore();
             }
         }
+
+        map_file.ignore();  // *** emscripten port seems to need an extra ignore() or else the map becomes misaligned; the new line character is processed differently in the browser(?)
+
+        if (coll0_file.is_open())
+            coll0_file.ignore();    // *** emscripten port seems to need an extra ignore() or else the map becomes misaligned; the new line character is processed differently in the browser(?)
     }
-
-    // map_file.ignore();
-
-    // for(y = 0; y < size_y; ++y) {
-    //     for(x = 0; x < size_x; ++x) {
-    //         map_file.get(c);
-            
-    //         if (c == '1') {
-    //             auto& t_col(manager.addEntity());
-    //             t_col.addComponent<ColliderComponent>("terrain", x * scaled_size, y * scaled_size, scaled_size);
-    //             t_col.addGroup(Game::group_colliders);
-    //         }
-
-    //         map_file.ignore();
-    //     }
-    // }
 };
 
 entt::entity Map::addTile(int src_x, int src_y, float pos_x, float pos_y) {
